@@ -94,6 +94,21 @@ export interface RollupPluginSbomOptions {
      */
     collectLicenseEvidence?: boolean;
     /**
+     * Whether to detect dependencies whose code a bundled package copied into its own files ("vendoring"),
+     * such as a library that ships a pre-bundled copy of a dependency. Each detected dependency is added as
+     * a nested component of the package that contains it.
+     *
+     * Detection compares code fingerprints of the installed `dependencies` and `optionalDependencies` of each
+     * bundled package with its bundled files. It cannot find code from packages that are not installed, such
+     * as a vendored `devDependency`, and it can miss copies that a build rewrote heavily.
+     *
+     * Pass an object to set how many fingerprints of a dependency must match (default `20`).
+     *
+     * @default false
+     * @since 5.1.0
+     */
+    detectVendoredPackages?: boolean | { minMatchedFingerprints?: number };
+    /**
      * Optional method to enable setting additional properties in the BOM before collecting it.
      * This can be useful if you need to add information which the plugin doesn't support at the time being.
      *
@@ -128,6 +143,7 @@ export const DEFAULT_OPTIONS = {
     supplier: undefined,
     properties: undefined,
     collectLicenseEvidence: false,
+    detectVendoredPackages: false,
     beforeCollect: undefined,
     afterCollect: undefined,
 } satisfies RollupPluginSbomOptions;

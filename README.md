@@ -101,21 +101,54 @@ export default defineConfig({
 
 #### Configuration Options
 
-| Name                | Default       | Description                                                                                 |
-| ------------------- | ------------- | ------------------------------------------------------------------------------------------- |
-| `specVersion`       | `1.7`         | The CycloneDX specification version to use                                                  |
-| `rootComponentType` | `application` | The root component type, can be `library` or `application`                                  |
-| `outDir`            | `cyclonedx`   | The output directory where the BOM file will be saved.                                      |
-| `outFilename`       | `bom`         | The base filename for the SBOM files.                                                       |
-| `outFormats`        | `['json']`    | The formats to output. Can be any of `json` and `xml` (note: `xml` requires `xmlbuilder2`). |
-| `saveTimestamp`     | `true`        | Whether to save the timestamp in the BOM metadata.                                          |
-| `autodetect`        | `true`        | Whether to get the root package registered automatically.                                   |
-| `generateSerial`    | `false`       | Whether to generate a serial number for the BOM.                                            |
-| `sortLists`         | `true`        | Whether to sort lists in the BOM for deterministic output.                                  |
-| `includeWellKnown`  | `true`        | Whether to generate a SBOM in the `well-known` directory.                                   |
-| `supplier`          | -             | Provide organizational entity information                                                   |
-| `beforeCollect`     | -             | Enhance the BOM before before collecting dependencies                                       |
-| `afterCollect`      | -             | Transform the BOM before after collecting dependencies                                      |
+| Name                     | Default       | Description                                                                                                              |
+| ------------------------ | ------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `specVersion`            | `1.7`         | The CycloneDX specification version to use                                                                               |
+| `rootComponentType`      | `application` | The root component type, can be `library` or `application`                                                               |
+| `outDir`                 | `cyclonedx`   | The output directory where the BOM file will be saved.                                                                   |
+| `outFilename`            | `bom`         | The base filename for the SBOM files.                                                                                    |
+| `outFormats`             | `['json']`    | The formats to output. Can be any of `json` and `xml` (note: `xml` requires `xmlbuilder2`).                              |
+| `saveTimestamp`          | `true`        | Whether to save the timestamp in the BOM metadata.                                                                       |
+| `autodetect`             | `true`        | Whether to get the root package registered automatically.                                                                |
+| `generateSerial`         | `false`       | Whether to generate a serial number for the BOM.                                                                         |
+| `sortLists`              | `true`        | Whether to sort lists in the BOM for deterministic output.                                                               |
+| `includeWellKnown`       | `true`        | Whether to generate a SBOM in the `well-known` directory.                                                                |
+| `supplier`               | -             | Provide organizational entity information                                                                                |
+| `detectVendoredPackages` | `false`       | Detect dependencies whose code a bundled package ships inside its own files, see [Vendored Packages](#vendored-packages) |
+| `beforeCollect`          | -             | Enhance the BOM before before collecting dependencies                                                                    |
+| `afterCollect`           | -             | Transform the BOM before after collecting dependencies                                                                   |
+
+#### Vendored Packages
+
+Some packages ship a copy of their dependencies inside their own files instead of importing them, for example a pre-bundled `dist/module.js`. The bundle then contains code of a package that the module graph does not show. With `detectVendoredPackages: true`, the plugin compares code fingerprints of the installed `dependencies` and `optionalDependencies` of each bundled package with the package's bundled files, and adds each match as a nested component:
+
+```json
+{
+  "name": "posthog-js",
+  "version": "1.352.0",
+  "components": [
+    {
+      "name": "fflate",
+      "version": "0.4.9",
+      "bom-ref": "pkg:npm/posthog-js@1.352.0|vendored:pkg:npm/fflate@0.4.9",
+      "properties": [
+        { "name": "rollup-plugin-sbom:vendored:detection", "value": "code-fingerprint" },
+        { "name": "rollup-plugin-sbom:vendored:matched-fingerprints", "value": "664/3532" },
+        { "name": "rollup-plugin-sbom:vendored:declared-version", "value": "^0.4.8" },
+        { "name": "rollup-plugin-sbom:vendored:fingerprinted-version", "value": "0.4.9" }
+      ]
+    }
+  ]
+}
+```
+
+The reported version is the version that the package declares if it is exact, else the installed version. An override changes only the installed copy, not the vendored one.
+
+Limitations:
+
+- Only installed packages can be compared, so code copied from a `devDependency` is not found.
+- A copy that a build rewrote heavily can match too few fingerprints. Lower `minMatchedFingerprints` (default `20`) with `detectVendoredPackages: { minMatchedFingerprints: 10 }` to find more, at the risk of false matches.
+- Fingerprinting adds build time: about 8 seconds to a SvelteKit application with 100 packages.
 
 ### Optional Peer Dependencies
 

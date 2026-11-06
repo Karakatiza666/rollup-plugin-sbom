@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "name": "host",
+  "version": "1.0.0",
+  "main": "./index.js",
+  "dependencies": {
+    "lib": "^1.0.0",
+    "unrelated": "1.0.0"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "type": "module",
+  "name": "lib",
+  "version": "1.2.0",
+  "main": "./index.js",
+  "dependencies": {
+    "sublib": "1.0.0"
+  }
+}
