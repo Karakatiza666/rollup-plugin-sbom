@@ -1,0 +1,181 @@
+import { Enums, Models, Spec } from "@cyclonedx/cyclonedx-library";
+import { Plugin } from "rollup";
+/**
+ * Configuration schema for an organizational entity which will be converted to a CycloneDX model internally
+ * @see https://cyclonedx-javascript-library.readthedocs.io/en/latest/typedoc/node/classes/Models.OrganizationalEntity.html
+ */
+interface OrganizationalEntityOption {
+  /**
+   * The name of the organization
+   * @example
+   * "Acme Inc."
+   */
+  name?: string;
+  /**
+   * The URL of the organization. Multiple URLs are allowed.
+   * @example
+   * "https://example.com"
+   */
+  url: string[];
+  /**
+   * A contact at the organization. Multiple contacts are allowed.
+   */
+  contact: {
+    /**
+     * The name of a contact
+     * @example
+     * "Contact name"
+     */
+    name?: string;
+    /**
+     * The email address of the contact.
+     * @example
+     * "firstname.lastname@example.com"
+     */
+    email?: string;
+    /**
+     * The phone number of the contact.
+     * @example
+     * "800-555-1212"
+     */
+    phone?: string;
+  }[];
+}
+/**
+ * A method which can transform a BOM model.
+ * Changes are applied directly to the BOM.
+ */
+type BomTransformHookFn = (bom: Models.Bom) => void;
+/**
+ * SBOM plugin configuration options
+ * @see https://github.com/janbiasi/rollup-plugin-sbom?tab=readme-ov-file#configuration-options
+ */
+interface RollupPluginSbomOptions {
+  /**
+   * Specification version to use, defaults to {@link Spec.Spec1dot7}
+   * @since 1.0.0
+   */
+  specVersion?: `${Spec.Version}`;
+  /**
+   * Defaults to Application
+   * @since 1.0.0
+   */
+  rootComponentType?: `${Enums.ComponentType}`;
+  /**
+   * Output directory to use, defaults to `"cyclonedx"`.
+   * Note: you don't need to prefix the build output path as the plugin
+   * uses the internal file emitter to write files.
+   * @since 1.0.0
+   */
+  outDir?: string;
+  /**
+   * The base filename for the SBOM files, defaults to 'bom'
+   * @since 1.0.0
+   */
+  outFilename?: string;
+  /**
+   * The formats to output, defaults to ['json', 'xml']
+   * @since 1.0.0
+   */
+  outFormats?: ("json" | "xml")[];
+  /**
+   * If you want to save the timestamp of the generation, defaults to `true`
+   * @since 1.0.0
+   */
+  saveTimestamp?: boolean;
+  /**
+   * If you want to get the root package registered automatically, defaults to `true`.
+   * You may set this to `false` if your project does not have a `package.json`
+   * @since 1.0.0
+   */
+  autodetect?: boolean;
+  /**
+   * Whether to generate a serial number for the BOM. Defaults to `false`.
+   * @since 1.0.0
+   */
+  generateSerial?: boolean;
+  /**
+   * Whether to sort lists (components, tools, dependencies, licenses, …) in the serialized SBOM
+   * to get deterministic output across builds. Defaults to `true`.
+   * @since 5.0.0
+   */
+  sortLists?: boolean;
+  /**
+   * Whether to generate a SBOM in the `.well-known` directory. Defaults to `true`.
+   * @since 1.0.0
+   */
+  includeWellKnown?: boolean;
+  /**
+   * The organization that supplied the component that the BOM describes.
+   * The supplier may often be the manufacturer, but may also be a distributor or repackager.
+   * @since 1.1.0
+   */
+  supplier?: OrganizationalEntityOption | undefined;
+  /**
+   * Provides the ability to document properties in a name-value store.
+   * This provides flexibility to include data not officially supported in the standard without
+   * having to use additional namespaces or create extensions. Unlike key-value stores, properties
+   * support duplicate names, each potentially having different values.
+   *
+   * Property names of interest to the general public are encouraged to be registered in the
+   * CycloneDX Property Taxonomy. Formal registration is OPTIONAL.
+   *
+   * @since 1.1.0
+   * @see https://github.com/CycloneDX/cyclonedx-property-taxonomy
+   */
+  properties?: {
+    name: string;
+    value: string;
+  }[] | undefined;
+  /**
+   * Whether to collect license evidence and attach them to the resulting SBOM.
+   *
+   * @default false
+   * @since 3.0.0
+   * @see https://cyclonedx.org/use-cases/open-source-licensing/
+   */
+  collectLicenseEvidence?: boolean;
+  /**
+   * Whether to detect dependencies whose code a bundled package copied into its own files ("vendoring"),
+   * such as a library that ships a pre-bundled copy of a dependency. Each detected dependency is added as
+   * a nested component of the package that contains it.
+   *
+   * Detection compares code fingerprints of the installed `dependencies` and `optionalDependencies` of each
+   * bundled package with its bundled files. It cannot find code from packages that are not installed, such
+   * as a vendored `devDependency`, and it can miss copies that a build rewrote heavily.
+   *
+   * Pass an object to set how many fingerprints of a dependency must match (default `20`).
+   *
+   * @default false
+   * @since 5.1.0
+   */
+  detectVendoredPackages?: boolean | {
+    minMatchedFingerprints?: number;
+  };
+  /**
+   * Optional method to enable setting additional properties in the BOM before collecting it.
+   * This can be useful if you need to add information which the plugin doesn't support at the time being.
+   *
+   * @since 2.1.0
+   * @param {Models.Bom} bom The initial SBOM for the project
+   * @returns The modified SBOM
+   */
+  beforeCollect?: BomTransformHookFn | undefined;
+  /**
+   * Optional method to enable modifying the BOM after collecting it.
+   * This can be useful if there's a temporary issue in generation.
+   * If you need to add additional properties it is recommended to use {@link beforeCollect}.
+   *
+   * @since 2.1.0
+   * @param {Models.Bom} bom The generated SBOM for the project
+   * @returns The modified SBOM
+   */
+  afterCollect?: BomTransformHookFn | undefined;
+}
+/**
+ * Plugin to generate CycloneDX SBOMs for your application or library
+ * Compatible with Rollup and Vite.
+ */
+export default function rollupPluginSbom(userOptions?: RollupPluginSbomOptions): Plugin;
+export {};
+//# sourceMappingURL=index.d.mts.map

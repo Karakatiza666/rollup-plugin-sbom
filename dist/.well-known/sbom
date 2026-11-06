@@ -1,0 +1,301 @@
+{
+	"$schema": "http://cyclonedx.org/schema/bom-1.7.schema.json",
+	"bomFormat": "CycloneDX",
+	"specVersion": "1.7",
+	"version": 1,
+	"metadata": {
+		"timestamp": "2026-11-06T17:09:29.316Z",
+		"lifecycles": [
+			{
+				"phase": "build"
+			}
+		],
+		"tools": {
+			"components": [
+				{
+					"type": "application",
+					"name": "rolldown",
+					"version": "1.2.15",
+					"description": "Fast JavaScript/TypeScript bundler in Rust with Rollup-compatible API.",
+					"licenses": [
+						{
+							"license": {
+								"id": "MIT"
+							}
+						}
+					],
+					"externalReferences": [
+						{
+							"url": "https://github.com/rolldown/rolldown/issues",
+							"type": "issue-tracker",
+							"comment": "as detected from PackageJson property \"bugs.url\""
+						},
+						{
+							"url": "git+https://github.com/rolldown/rolldown.git#packages/rolldown",
+							"type": "vcs",
+							"comment": "as detected from PackageJson property \"repository.url\" and \"repository.directory\""
+						},
+						{
+							"url": "https://rolldown.rs/",
+							"type": "website",
+							"comment": "as detected from PackageJson property \"homepage\""
+						}
+					],
+					"properties": [
+						{
+							"name": "cdx:npm:package:constraint:engine:node",
+							"value": "^20.19.0 || >=22.12.0"
+						}
+					]
+				},
+				{
+					"type": "application",
+					"name": "rolldown",
+					"version": "1.2.15",
+					"description": "Fast JavaScript/TypeScript bundler in Rust with Rollup-compatible API.",
+					"licenses": [
+						{
+							"license": {
+								"id": "MIT"
+							}
+						}
+					],
+					"externalReferences": [
+						{
+							"url": "https://github.com/rolldown/rolldown/issues",
+							"type": "issue-tracker",
+							"comment": "as detected from PackageJson property \"bugs.url\""
+						},
+						{
+							"url": "git+https://github.com/rolldown/rolldown.git#packages/rolldown",
+							"type": "vcs",
+							"comment": "as detected from PackageJson property \"repository.url\" and \"repository.directory\""
+						},
+						{
+							"url": "https://rolldown.rs/",
+							"type": "website",
+							"comment": "as detected from PackageJson property \"homepage\""
+						}
+					],
+					"properties": [
+						{
+							"name": "cdx:npm:package:constraint:engine:node",
+							"value": "^20.19.0 || >=22.12.0"
+						}
+					]
+				},
+				{
+					"type": "application",
+					"name": "rollup",
+					"version": "4.65.1",
+					"author": "Rich Harris",
+					"description": "Next-generation ES module bundler",
+					"licenses": [
+						{
+							"license": {
+								"id": "MIT"
+							}
+						}
+					],
+					"externalReferences": [
+						{
+							"url": "https://github.com/rollup/rollup/issues",
+							"type": "issue-tracker",
+							"comment": "as detected from PackageJson property \"bugs.url\""
+						},
+						{
+							"url": "git+https://github.com/rollup/rollup.git",
+							"type": "vcs",
+							"comment": "as detected from PackageJson property \"repository.url\""
+						},
+						{
+							"url": "https://rollupjs.org/",
+							"type": "website",
+							"comment": "as detected from PackageJson property \"homepage\""
+						}
+					],
+					"properties": [
+						{
+							"name": "cdx:npm:package:constraint:engine:node",
+							"value": ">=18.0.0"
+						},
+						{
+							"name": "cdx:npm:package:constraint:engine:npm",
+							"value": ">=8.0.0"
+						}
+					]
+				},
+				{
+					"type": "application",
+					"name": "rollup",
+					"version": "4.65.1",
+					"author": "Rich Harris",
+					"description": "Next-generation ES module bundler",
+					"licenses": [
+						{
+							"license": {
+								"id": "MIT"
+							}
+						}
+					],
+					"externalReferences": [
+						{
+							"url": "https://github.com/rollup/rollup/issues",
+							"type": "issue-tracker",
+							"comment": "as detected from PackageJson property \"bugs.url\""
+						},
+						{
+							"url": "git+https://github.com/rollup/rollup.git",
+							"type": "vcs",
+							"comment": "as detected from PackageJson property \"repository.url\""
+						},
+						{
+							"url": "https://rollupjs.org/",
+							"type": "website",
+							"comment": "as detected from PackageJson property \"homepage\""
+						}
+					],
+					"properties": [
+						{
+							"name": "cdx:npm:package:constraint:engine:node",
+							"value": ">=18.0.0"
+						},
+						{
+							"name": "cdx:npm:package:constraint:engine:npm",
+							"value": ">=8.0.0"
+						}
+					]
+				},
+				{
+					"type": "application",
+					"name": "vite",
+					"version": "8.3.5",
+					"author": "Evan You",
+					"description": "Native-ESM powered web dev build tool",
+					"licenses": [
+						{
+							"license": {
+								"id": "MIT"
+							}
+						}
+					],
+					"externalReferences": [
+						{
+							"url": "https://github.com/vitejs/vite/issues",
+							"type": "issue-tracker",
+							"comment": "as detected from PackageJson property \"bugs.url\""
+						},
+						{
+							"url": "git+https://github.com/vitejs/vite.git#packages/vite",
+							"type": "vcs",
+							"comment": "as detected from PackageJson property \"repository.url\" and \"repository.directory\""
+						},
+						{
+							"url": "https://vite.dev",
+							"type": "website",
+							"comment": "as detected from PackageJson property \"homepage\""
+						}
+					],
+					"properties": [
+						{
+							"name": "cdx:npm:package:constraint:engine:node",
+							"value": "^20.19.0 || >=22.12.0"
+						}
+					]
+				},
+				{
+					"type": "application",
+					"name": "vite",
+					"version": "8.3.5",
+					"author": "Evan You",
+					"description": "Native-ESM powered web dev build tool",
+					"licenses": [
+						{
+							"license": {
+								"id": "MIT"
+							}
+						}
+					],
+					"externalReferences": [
+						{
+							"url": "https://github.com/vitejs/vite/issues",
+							"type": "issue-tracker",
+							"comment": "as detected from PackageJson property \"bugs.url\""
+						},
+						{
+							"url": "git+https://github.com/vitejs/vite.git#packages/vite",
+							"type": "vcs",
+							"comment": "as detected from PackageJson property \"repository.url\" and \"repository.directory\""
+						},
+						{
+							"url": "https://vite.dev",
+							"type": "website",
+							"comment": "as detected from PackageJson property \"homepage\""
+						}
+					],
+					"properties": [
+						{
+							"name": "cdx:npm:package:constraint:engine:node",
+							"value": "^20.19.0 || >=22.12.0"
+						}
+					]
+				}
+			]
+		},
+		"component": {
+			"type": "application",
+			"name": "rollup-plugin-sbom",
+			"version": "1.0.0",
+			"bom-ref": "pkg:npm/rollup-plugin-sbom@1.0.0?vcs_url=git%2Bhttps%3A%2F%2Fgithub.com%2Fjanbiasi%2Frollup-plugin-sbom.git",
+			"author": "Jan Biasi",
+			"description": "A rollup, rolldown and vite plugin to generate SBOMs for your application",
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			],
+			"purl": "pkg:npm/rollup-plugin-sbom@1.0.0?vcs_url=git%2Bhttps%3A%2F%2Fgithub.com%2Fjanbiasi%2Frollup-plugin-sbom.git",
+			"externalReferences": [
+				{
+					"url": "https://github.com/janbiasi/rollup-plugin-sbom/issues",
+					"type": "issue-tracker",
+					"comment": "as detected from PackageJson property \"bugs.url\""
+				},
+				{
+					"url": "git+https://github.com/janbiasi/rollup-plugin-sbom.git",
+					"type": "vcs",
+					"comment": "as detected from PackageJson property \"repository.url\""
+				},
+				{
+					"url": "https://github.com/janbiasi/rollup-plugin-sbom#readme",
+					"type": "website",
+					"comment": "as detected from PackageJson property \"homepage\""
+				}
+			],
+			"properties": [
+				{
+					"name": "cdx:npm:package:constraint:engine:node",
+					"value": ">=22.9.0"
+				}
+			]
+		},
+		"supplier": {
+			"url": [
+				"https://github.com/janbiasi/rollup-plugin-sbom"
+			],
+			"contact": [
+				{
+					"name": "Jan Biasi"
+				}
+			]
+		}
+	},
+	"components": [],
+	"dependencies": [
+		{
+			"ref": "pkg:npm/rollup-plugin-sbom@1.0.0?vcs_url=git%2Bhttps%3A%2F%2Fgithub.com%2Fjanbiasi%2Frollup-plugin-sbom.git"
+		}
+	]
+}
