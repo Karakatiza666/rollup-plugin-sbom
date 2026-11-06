@@ -17,6 +17,12 @@ import {
 } from "./dependency-info-registry";
 import { readPackage, type NormalizedPackageJson } from "./package-reader";
 import { composePackageUrlFromPackageJson } from "./purl";
+import {
+    createVendoredPackageDetector,
+    DEFAULT_MIN_MATCHED_FINGERPRINTS,
+    type VendoredPackage,
+} from "./vendored-packages";
+import type { ModuleIdString } from "./types/aliases";
 
 /**
  * Plugin to generate CycloneDX SBOMs for your application or library
@@ -130,6 +136,95 @@ export default function rollupPluginSbom(userOptions?: RollupPluginSbomOptions):
         });
 
         return component;
+    }
+
+    /**
+     * Adds a vendored package as a nested component of the package that contains its code
+     */
+    function addVendoredComponent(context: PluginContext, parent: CDX.Models.Component, vendored: VendoredPackage) {
+        const vendoredPkg = { ...vendored.pkg, version: vendored.version };
+        const purl = composePackageUrlFromPackageJson(vendoredPkg)?.toString();
+        // Two installed copies of the parent package can contain the same vendored package
+        if ([...parent.components].some((sibling) => sibling.purl?.toString() === purl)) {
+            return;
+        }
+        const component = cdxComponentBuilder.makeComponent(vendoredPkg);
+        if (!component) {
+            context.warn(`Failed to create component for ${vendoredPkg.name}@${vendoredPkg.version}`);
+            return;
+        }
+        if (purl) {
+            component.purl = purl;
+            // The same package can also be a top-level component, and bom-refs must be unique
+            component.bomRef.value = `${parent.bomRef.value}|vendored:${purl}`;
+        }
+        component.licenses.forEach((l) => {
+            l.acknowledgement = CDX.Enums.LicenseAcknowledgement.Declared;
+        });
+        component.properties.add(new CDX.Models.Property(`${PLUGIN_ID}:vendored:detection`, "code-fingerprint"));
+        component.properties.add(
+            new CDX.Models.Property(
+                `${PLUGIN_ID}:vendored:matched-fingerprints`,
+                `${vendored.matchedFingerprints}/${vendored.totalFingerprints}`,
+            ),
+        );
+        component.properties.add(
+            new CDX.Models.Property(`${PLUGIN_ID}:vendored:declared-version`, vendored.declaredVersion),
+        );
+        component.properties.add(
+            new CDX.Models.Property(`${PLUGIN_ID}:vendored:fingerprinted-version`, vendored.pkg.version),
+        );
+        parent.components.add(component);
+        context.info(
+            `Detected vendored ${vendoredPkg.name}@${vendoredPkg.version} in ${parent.name}@${parent.version} (${vendored.matchedFingerprints}/${vendored.totalFingerprints} fingerprints)`,
+        );
+
+        vendored.vendored.forEach((child) => addVendoredComponent(context, component, child));
+    }
+
+    /**
+     * Adds the dependencies whose code bundled packages copied into their own files
+     */
+    async function addVendoredComponents(context: PluginContext, tree: Set<ExternalModuleInfo>) {
+        const minMatchedFingerprints =
+            (typeof options.detectVendoredPackages === "object" &&
+                options.detectVendoredPackages.minMatchedFingerprints) ||
+            DEFAULT_MIN_MATCHED_FINGERPRINTS;
+        const detector = createVendoredPackageDetector(context, minMatchedFingerprints);
+
+        const bundledModulesByPackageDir = new Map<
+            string,
+            { pkg: NormalizedPackageJson; moduleIds: ModuleIdString[]; importedPackageDirs: Set<string> }
+        >();
+        for (const mod of tree) {
+            const info = dependencyInfoRegistry.get(mod.modulePath);
+            if (!info) {
+                continue;
+            }
+            const entry = bundledModulesByPackageDir.get(info.path) ?? {
+                pkg: info.pkg,
+                moduleIds: [],
+                importedPackageDirs: new Set(),
+            };
+            entry.moduleIds.push(mod.moduleId);
+            for (const imported of mod.dependsOn) {
+                const importedInfo = dependencyInfoRegistry.get(imported.modulePath);
+                if (importedInfo) {
+                    entry.importedPackageDirs.add(importedInfo.path);
+                }
+            }
+            bundledModulesByPackageDir.set(info.path, entry);
+        }
+
+        for (const [packageDir, { pkg, moduleIds, importedPackageDirs }] of bundledModulesByPackageDir) {
+            const host = registeredModules.get(generatePackageId(pkg));
+            if (!host) {
+                continue;
+            }
+            for (const vendored of await detector.detect(pkg, packageDir, moduleIds, importedPackageDirs)) {
+                addVendoredComponent(context, host, vendored);
+            }
+        }
     }
 
     return {
@@ -260,6 +355,10 @@ export default function rollupPluginSbom(userOptions?: RollupPluginSbomOptions):
                 json: jsonSerializer,
                 xml: xmlSerializer,
             };
+
+            if (options.detectVendoredPackages) {
+                await addVendoredComponents(this, tree);
+            }
 
             if (options.afterCollect) {
                 this.debug('Applying custom transform "afterCollect"');

@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "name": "sublib",
+  "version": "1.0.1",
+  "main": "./index.js"
+}

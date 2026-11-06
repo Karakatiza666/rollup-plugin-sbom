@@ -1,0 +1,14 @@
+{
+  "name": "@fixtures/vendored",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "build": "rollup -c rollup.config.mjs",
+    "postinstall": "cp -r ./fake-tree/** ./node_modules"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "catalog:rollup4",
+    "rollup": "catalog:rollup4",
+    "rollup-plugin-sbom": "workspace:*"
+  }
+}

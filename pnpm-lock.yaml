@@ -505,6 +505,18 @@ importers:
         specifier: workspace:*
         version: link:../../..
 
+  test/fixtures/vendored:
+    devDependencies:
+      '@rollup/plugin-node-resolve':
+        specifier: catalog:rollup4
+        version: 16.0.3(rollup@4.65.1)
+      rollup:
+        specifier: catalog:rollup4
+        version: 4.65.1
+      rollup-plugin-sbom:
+        specifier: workspace:*
+        version: link:../../..
+
   test/fixtures/vite-v6:
     dependencies:
       '@base-ui/react':
